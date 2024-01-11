@@ -6,7 +6,7 @@
 /*   By: mjeannin <mjeannin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:10 by mjeannin          #+#    #+#             */
-/*   Updated: 2024/01/10 19:17:36 by mjeannin         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:48:31 by mjeannin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,8 @@ char	*get_next_line(int fd)
 		return (NULL);
 	readed = 1;
 	line = NULL;
-
 	//1. read from fd and add to linked list
-	read_and_stash(fd, &stash, &readed);
+	read_and_stash(fd, &stash);
 	if (stash == NULL)
 		return (NULL);
 	//2. extract from stash to line
@@ -70,8 +69,11 @@ void	add_to_stash(t_list **stash, char *buf, int readed)
 	t_list	*last;
 	t_list	*new_node;
 
+	new_node = malloc(sizeof(t_list));
+	if (new_node == NULL)
+		return ;
 	new_node->next = NULL;
-	new_node->content = malloc(sizeof(char) * readed + 1);
+	new_node->content = malloc(sizeof(char) * (readed + 1));
 	if (new_node->content == NULL)
 		return ;
 	i = 0;
@@ -84,7 +86,7 @@ void	add_to_stash(t_list **stash, char *buf, int readed)
 	if (*stash == NULL)
 	{
 		*stash = new_node;
-			return ;
+		return ;
 	}
 	last = ft_lst_get_last(*stash);
 	last->next = new_node;
@@ -95,6 +97,7 @@ void	extract_line(t_list *stash, char **line)
 	int	i;
 	int	j;
 
+	j = 0;
 	if (stash == NULL)
 		return ;
 	generate_line(line, stash);

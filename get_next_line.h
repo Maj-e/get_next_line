@@ -6,7 +6,7 @@
 /*   By: mjeannin <mjeannin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:15 by mjeannin          #+#    #+#             */
-/*   Updated: 2024/01/10 19:14:45 by mjeannin         ###   ########.fr       */
+/*   Updated: 2024/01/22 13:26:46 by mjeannin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,11 @@
 # include <sys/types.h>
 # include <sys/uio.h>
 # include <unistd.h>
+# include <fcntl.h>
+
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5
+#  define BUFFER_SIZE 100
 # endif
 
 typedef struct s_list

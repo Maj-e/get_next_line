@@ -6,7 +6,7 @@
 /*   By: mjeannin <mjeannin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:18 by mjeannin          #+#    #+#             */
-/*   Updated: 2024/01/10 19:01:13 by mjeannin         ###   ########.fr       */
+/*   Updated: 2024/01/22 14:01:46 by mjeannin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ int	found_newline(t_list *stash)
 	t_list	*current;
 
 	if (stash == NULL)
+	{
+		free(stash);
 		return (0);
+	}
 	current = ft_lst_get_last(stash);
 	i = 0;
 	while (current->content[i])
@@ -30,6 +33,8 @@ int	found_newline(t_list *stash)
 	return (0);
 }
 
+/* Returns a pointer to the last node in our stash */
+
 t_list	*ft_lst_get_last(t_list *stash)
 {
 	t_list	*current;
@@ -39,6 +44,9 @@ t_list	*ft_lst_get_last(t_list *stash)
 		current = current->next;
 	return (current);
 }
+
+/* Calculates the number of chars in the current line, including the trailing
+ * \n if there is one, and allocates memory accordingly. */
 
 void	generate_line(char **line, t_list *stash)
 {
@@ -61,8 +69,10 @@ void	generate_line(char **line, t_list *stash)
 		}
 		stash = stash->next;
 	}
-	*line = malloc(sizeof(char) * (len +1));
+	*line = malloc(sizeof(char) * (len + 1));
 }
+
+/* Frees the entire stash. */
 
 void	free_stash(t_list *stash)
 {
@@ -77,4 +87,15 @@ void	free_stash(t_list *stash)
 		free(current);
 		current = next;
 	}
+
+}
+
+int	ft_strlen(const char *str)
+{
+	int	len;
+
+	len = 0;
+	while (*(str++))
+		len++;
+	return (len);
 }

@@ -6,7 +6,7 @@
 /*   By: mjeannin <mjeannin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:10 by mjeannin          #+#    #+#             */
-/*   Updated: 2024/01/22 15:19:26 by mjeannin         ###   ########.fr       */
+/*   Updated: 2024/01/23 15:37:48 by mjeannin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,11 @@ void	read_and_stash(int fd, t_list **stash)
 	{
 		buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 		if (buf == NULL)
+		{
+			free_stash(*stash);
+			*stash = NULL;
 			return ;
+		}
 		readed = (int)read(fd, buf, BUFFER_SIZE);
 		if ((*stash == NULL && readed == 0) || readed == -1)
 		{
@@ -66,35 +70,31 @@ void	read_and_stash(int fd, t_list **stash)
 	}
 }
 
-/* Adds the content of our buffer to the end of our stash */
+/* Adds the cont of our buffer to the end of our stash */
 
 void	add_to_stash(t_list **stash, char *buf, int readed)
 {
 	int		i;
-	t_list	*last;
 	t_list	*new_node;
 
 	new_node = malloc(sizeof(t_list));
-	if (new_node == NULL)
+	if (!new_node)
 		return ;
+	new_node->cont = malloc(sizeof(char) * (readed + 1));
+	if (!new_node->cont)
+	{
+		free(new_node);
+		return ;
+	}
+	i = -1;
+	while (++i < readed && buf[i])
+		new_node->cont[i] = buf[i];
+	new_node->cont[i] = '\0';
 	new_node->next = NULL;
-	new_node->content = malloc(sizeof(char) * (readed + 1));
-	if (new_node->content == NULL)
-		return ;
-	i = 0;
-	while (buf[i] && i < readed)
-	{
-		new_node->content[i] = buf[i];
-		i++;
-	}
-	new_node->content[i] = '\0';
-	if (*stash == NULL)
-	{
+	if (*stash)
+		ft_lst_get_last(*stash)->next = new_node;
+	else
 		*stash = new_node;
-		return ;
-	}
-	last = ft_lst_get_last(*stash);
-	last->next = new_node;
 }
 
 /* Extracts all characters from our stash and stores them in out line.
@@ -114,20 +114,19 @@ void	extract_line(t_list *stash, char **line)
 	while (stash)
 	{
 		i = 0;
-		while (stash->content[i])
+		while (stash->cont[i])
 		{
-			if (stash->content[i] == '\n')
+			if (stash->cont[i] == '\n')
 			{
-				(*line)[j++] = stash->content[i];
+				(*line)[j++] = stash->cont[i];
 				break ;
 			}
-			(*line)[j++] = stash->content[i++];
+			(*line)[j++] = stash->cont[i++];
 		}
 		stash = stash->next;
 	}
 	(*line)[j] = '\0';
 }
-
 
 void	clean_stash(t_list **stash)
 {
@@ -142,17 +141,17 @@ void	clean_stash(t_list **stash)
 	clean_node->next = NULL;
 	last = ft_lst_get_last(*stash);
 	i = 0;
-	while (last->content[i] && last->content[i] != '\n')
+	while (last->cont[i] && last->cont[i] != '\n')
 		i++;
-	if (last->content && last->content[i] == '\n')
+	if (last->cont && last->cont[i] == '\n')
 		i++;
-	clean_node->content = malloc(sizeof(char) * ((ft_strlen(last->content) - i) + 1));
-	if (clean_node->content == NULL)
+	clean_node->cont = malloc(sizeof(char) * ((ft_strlen(last->cont) - i) + 1));
+	if (clean_node->cont == NULL)
 		return ;
 	j = 0;
-	while (last->content[i])
-		clean_node->content[j++] = last->content[i++];
-	clean_node->content[j] = '\0';
+	while (last->cont[i])
+		clean_node->cont[j++] = last->cont[i++];
+	clean_node->cont[j] = '\0';
 	free_stash(*stash);
 	*stash = clean_node;
 }

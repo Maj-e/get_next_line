@@ -6,7 +6,7 @@
 /*   By: mjeannin <mjeannin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 16:52:18 by mjeannin          #+#    #+#             */
-/*   Updated: 2024/01/22 14:01:46 by mjeannin         ###   ########.fr       */
+/*   Updated: 2024/01/23 15:39:48 by mjeannin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,13 @@ int	found_newline(t_list *stash)
 
 	if (stash == NULL)
 	{
-		free(stash);
 		return (0);
 	}
 	current = ft_lst_get_last(stash);
 	i = 0;
-	while (current->content[i])
+	while (current->cont[i])
 	{
-		if (current->content[i] == '\n')
+		if (current->cont[i] == '\n')
 			return (1);
 		i++;
 	}
@@ -34,7 +33,6 @@ int	found_newline(t_list *stash)
 }
 
 /* Returns a pointer to the last node in our stash */
-
 t_list	*ft_lst_get_last(t_list *stash)
 {
 	t_list	*current;
@@ -57,9 +55,9 @@ void	generate_line(char **line, t_list *stash)
 	while (stash)
 	{
 		i = 0;
-		while (stash->content[i])
+		while (stash->cont[i])
 		{
-			if (stash->content[i] == '\n')
+			if (stash->cont[i] == '\n')
 			{
 				len++;
 				break ;
@@ -70,6 +68,8 @@ void	generate_line(char **line, t_list *stash)
 		stash = stash->next;
 	}
 	*line = malloc(sizeof(char) * (len + 1));
+	if (*line)
+		(*line)[len] = '\0';
 }
 
 /* Frees the entire stash. */
@@ -82,12 +82,11 @@ void	free_stash(t_list *stash)
 	current = stash;
 	while (current)
 	{
-		free(current->content);
+		free(current->cont);
 		next = current->next;
 		free(current);
 		current = next;
 	}
-
 }
 
 int	ft_strlen(const char *str)
